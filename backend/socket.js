@@ -34,9 +34,10 @@ function setupSocket(server) {
         content
       });
       await message.save();
+      const senderUser = await User.findById(socket.user.id).select('_id role');
       io.to(threadId).emit('receive-message', {
         threadId,
-        sender: socket.user,
+        sender: senderUser,
         content,
         timestamp: message.timestamp
       });

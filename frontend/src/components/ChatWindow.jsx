@@ -7,7 +7,7 @@ const getAvatar = (role) => {
   return '👤';
 };
 
-const ChatWindow = ({ messages, onSendMessage, user, thread, input, setInput, canSend, closeThread }) => {
+const ChatWindow = ({ messages, onSendMessage, user, thread, input, setInput, canSend, closeThread, onRefreshMessages }) => {
   const bottomRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
@@ -30,6 +30,16 @@ const ChatWindow = ({ messages, onSendMessage, user, thread, input, setInput, ca
             <div className="text-xs text-blue-700 mt-1">You are chatting with the Admin.</div>
           )}
         </div>
+        {/* Refresh button */}
+        {thread && (
+          <button
+            className="ml-2 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors text-sm"
+            onClick={onRefreshMessages}
+            title="Refresh messages"
+          >
+            &#x21bb; Refresh
+          </button>
+        )}
         {/* 3-dots menu for admin to close thread */}
         {user?.role === 'Admin' && thread && thread.status !== 'closed' && (
           <div className="relative">

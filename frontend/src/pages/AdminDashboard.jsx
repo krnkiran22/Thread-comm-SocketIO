@@ -46,6 +46,7 @@ const AdminDashboard = ({ user }) => {
           setInput={setInput}
           canSend={user.role === 'Admin'}
           closeThread={closeThread}
+          onRefreshMessages={() => selectedThread && selectThread(selectedThread)}
         />
       </div>
     </div>

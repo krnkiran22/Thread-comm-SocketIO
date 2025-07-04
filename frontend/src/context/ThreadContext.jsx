@@ -18,6 +18,23 @@ export const ThreadProvider = ({ children }) => {
     if (user) fetchThreads();
   }, [user, filter]);
 
+  // Restore last selected thread on mount if available
+  useEffect(() => {
+    if (user && threads.length > 0) {
+      const lastThreadId = localStorage.getItem('lastSelectedThreadId');
+      if (lastThreadId) {
+        const found = threads.find(t => t._id === lastThreadId);
+        if (found) {
+          setSelectedThread(found);
+          // Join the thread room for real-time updates
+          if (socketRef.current) {
+            socketRef.current.emit('join-thread', found._id);
+          }
+        }
+      }
+    }
+  }, [user, threads]);
+
   useEffect(() => {
     if (selectedThread) {
       // Fetch messages when thread changes
@@ -67,6 +84,11 @@ export const ThreadProvider = ({ children }) => {
 
   const selectThread = async (thread) => {
     setSelectedThread(thread);
+    localStorage.setItem('lastSelectedThreadId', thread._id); // Persist selection
+    // Join the thread room for real-time updates
+    if (socketRef.current) {
+      socketRef.current.emit('join-thread', thread._id);
+    }
     const res = await axios.get(`/threads/${thread._id}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
     setMessages(res.data);
   };
